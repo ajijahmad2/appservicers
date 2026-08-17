@@ -9,6 +9,7 @@ on:
 jobs:
   terraform:
     runs-on: ubuntu-latest
+
     env:
       ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
       ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
@@ -24,24 +25,20 @@ jobs:
 
       - name: Terraform Init
         run: terraform init
-        working-directory: ./appservicers
 
       - name: Terraform Validate
         run: terraform validate
-        working-directory: ./appservicers
 
       - name: Terraform Plan
         run: terraform plan -out=tfplan
-        working-directory: ./appservicers
 
       - name: Upload Plan Artifact
         if: startsWith(github.ref, 'refs/heads/feature/')
         uses: actions/upload-artifact@v4
         with:
           name: tfplan
-          path: ./environment/tfplan
+          path: ./tfplan
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main'
         run: terraform apply -auto-approve tfplan
-        working-directory: ./appservicers
